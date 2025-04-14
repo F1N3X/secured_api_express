@@ -3,9 +3,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const healthRoute = require('./routes/healthRoute');
+
+app.use('/health', healthRoute);
 
 app.listen(port, () => {
   console.log(`Serveur lancé sur http://localhost:${port}`);
