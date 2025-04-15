@@ -9,10 +9,10 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const { data, error } = await supabase
       .from('users')
-      .insert([{ name, email, hashedPassword }]);
+      .insert([{ name, email, password: hashedPassword }]);
 
     if (error) {
       return res.status(500).json({ error: error.message });
