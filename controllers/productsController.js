@@ -62,21 +62,21 @@ exports.createProduct = async (req, res) => {
         .from('products')
         .insert([
             {
-              shopify_id: shopifyProduct.id,
-              created_by: req.user.id,
-              sales_count: 0
+                shopify_id: shopifyProduct.id,
+                created_by: req.user.id,
+                sales_count: 0
             }
         ]);
 
         if (error) {
-        console.error('Erreur Supabase:', error);
-        return res.status(500).json({ error: "Erreur lors de l'enregistrement en base" });
+            console.error('Erreur Supabase:', error);
+            return res.status(500).json({ error: "Erreur lors de l'enregistrement en base" });
         }
 
         res.status(201).json({
-        message: "Produit créé avec succès",
-        product: shopifyProduct,
-        db_entry: data,
+            message: "Produit créé avec succès",
+            product: shopifyProduct,
+            db_entry: data,
         });
         
     } catch (error) {
