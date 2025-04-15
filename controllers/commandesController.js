@@ -1,35 +1,29 @@
 const axios = require("axios");
 
-const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_TOKEN; // token d'accès API
+const SHOPIFY_SECRET_KEY = process.env.SHOPIFY_SECRET_KEY; // token d'accès API
 
 exports.newCommande = async (req, res) => {
-    const { items } = req.body;
+    const { body } = req.body;
+    const hmacHeader = req.get('X-Shopify-Hmac-Sha256');
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
+    const generatedHash = crypto
+    .createHmac('sha256', SHOPIFY_SECRET_KEY)
+    .update(body, 'utf8')
+    .digest('base64');
+
+    if (hmacHeader !== generatedHash) {
+        return res.status(401).json({ error: "Signature invalide" });
+    }
+    if (!body) {
         return res.status(400).json({ error: "Une liste d'articles est requise" });
     }
-
+    const items = body.line_items;
     try {
     
         // Pour chaque item : chercher le produit par titre
         for (const item of items) {
             const { title, quantity } = item;
             
-            // Rechercher un produit avec ce titre
-            const searchRes = await axios.get(
-                `https://ldvoverwatch.myshopify.com/admin/api/2023-10/products.json?title=${encodeURIComponent(title)}`,
-                {
-                    headers: {
-                        "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
-                        "Content-Type": "application/json",
-                    },
-                    }
-            );
-        
-            const foundProduct = searchRes.data.products[0];
-            if (!foundProduct) {
-                return res.status(404).json({ error: `Produit "${title}" introuvable dans Shopify` });
-            }
         
         }
     
