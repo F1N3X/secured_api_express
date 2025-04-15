@@ -1,4 +1,5 @@
 const supabase = require('../supabaseClient');
+const bcrypt = require('bcrypt');
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -8,9 +9,10 @@ exports.register = async (req, res) => {
   }
 
   try {
+    const hashedPassword = await bcrypt.hash(password);
     const { data, error } = await supabase
       .from('users')
-      .insert([{ name, email, password }]);
+      .insert([{ name, email, hashedPassword }]);
 
     if (error) {
       return res.status(500).json({ error: error.message });
