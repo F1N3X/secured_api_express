@@ -1,6 +1,7 @@
 const axios = require("axios");
+const supabase = require("../supabaseClient");
 
-const SHOPIFY_SECRET_KEY = process.env.SHOPIFY_SECRET_KEY; // token d'accès API
+const SHOPIFY_SECRET_KEY = process.env.SHOPIFY_SECRET_KEY; 
 
 exports.newCommande = async (req, res) => {
     const { body } = req.body;
@@ -20,10 +21,18 @@ exports.newCommande = async (req, res) => {
     const items = body.line_items;
     try {
     
-        // Pour chaque item : chercher le produit par titre
         for (const item of items) {
-            const { title, quantity } = item;
-            
+            const { id, quantity } = item;
+            const { current, error: fetchError } = await supabase
+                .from('products')
+                .select('sales_count')
+                .eq('id', id)
+                .single();
+                
+            await supabase 
+                    .from("products")
+                    .update({ sales_count: current.sales_count + quantity })
+                    .eq('id', id);
         
         }
     
