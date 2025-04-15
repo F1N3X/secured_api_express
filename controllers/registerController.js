@@ -16,9 +16,13 @@ exports.register = async (req, res) => {
       return res.status(500).json({ error: error.message });
     }
 
-    res.status(201).json({ message: 'Utilisateur créé avec succès', user: data[0] });
+    res.status(201).json({ message: 'Utilisateur créé avec succès'});
 
   } catch (err) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    console.error('Registration error:', err);
+    res.status(500).json({ 
+      error: 'Erreur serveur', 
+      details: err.message || 'Aucun détail disponible'
+    });
   }
 };
