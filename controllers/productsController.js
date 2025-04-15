@@ -7,7 +7,7 @@ exports.getProducts = async (req, res) => {
         console.log("TOKEN:", SHOPIFY_ACCESS_TOKEN);
 
         const response = await axios.get(
-            `https://ldvoverwatch.myshopify.com/admin/api/2023-10/products.json`,
+            `https://ldvoverwatch.myshopify.com/admin/api/2024-10/products.json`,
             {
                 headers: {
                     "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
@@ -34,7 +34,7 @@ exports.createProduct = async (req, res) => {
 
     try {
         const response = await axios.post(
-            `https://ldvoverwatch.myshopify.com/admin/api/2023-10/products.json`,
+            `https://ldvoverwatch.myshopify.com/admin/api/2024-10/products.json`,
             {
                 product: {
                     title,
