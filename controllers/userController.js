@@ -4,7 +4,7 @@ exports.getAllUsers = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('id, name, email');
+      .select('id, name, email, role');
 
     if (error) {
       return res.status(500).json({ error: error.message });
@@ -23,7 +23,7 @@ exports.getMyUser = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('id, name, email')
+      .select('id, name, email, role')
       .eq('id', userId)
       .single();
 

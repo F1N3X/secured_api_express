@@ -29,6 +29,16 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Mot de passe incorrect' });
     }
 
+    const { data: roleData, error: roleError } = await supabase
+      .from('roles')
+      .select('*')
+      .eq('id', user.role)
+      .single();
+
+    if (roleData.name === 'BAN') {
+      return res.status(403).json({ error: 'Votre compte est banni.' });
+    }
+
     const token = jwt.sign(
       { id: user.id, email: user.email },
       JWT_SECRET,
@@ -38,7 +48,7 @@ exports.login = async (req, res) => {
     return res.status(200).json({
       message: 'Connexion réussie',
       token,
-      user: { id: user.id, name: user.name, email: user.email }
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
 
   } catch (err) {
