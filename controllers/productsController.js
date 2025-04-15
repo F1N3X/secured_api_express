@@ -3,26 +3,42 @@ const supabase = require('../supabaseClient');
 
 const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_TOKEN; // token d'accès API
 
+exports.getMyProducts = async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("created_by", userId);
+
+        if (error) {
+        console.error("Erreur Supabase:", error);
+        return res.status(500).json({ error: "Erreur lors de la récupération des produits" });
+        }
+
+        res.status(200).json({ products: data });
+    } catch (err) {
+        console.error("Erreur my-products:", err);
+        return res.status(401).json({ error: "Token invalide ou expiré" });
+    }
+}
+
 exports.getProducts = async (req, res) => {
     try {
-        console.log("TOKEN:", SHOPIFY_ACCESS_TOKEN);
-
-        const response = await axios.get(
-            `https://ldvoverwatch.myshopify.com/admin/api/2024-10/products.json`,
-            {
-                headers: {
-                    "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        res.json(response.data);
-    } catch (error) {
-        console.error("Erreur Shopify:", error.response?.data || error.message);
-        res
-            .status(500)
-            .json({ error: "Erreur lors de la récupération des produits" });
+        const { data, error } = await supabase
+          .from("products")
+          .select("*");
+    
+        if (error) {
+          console.error("Erreur Supabase:", error);
+          return res.status(500).json({ error: "Erreur lors de la récupération des produits" });
+        }
+    
+        res.status(200).json({ products: data });
+    } catch (err) {
+        console.error("Erreur /products:", err);
+        return res.status(500).json({ error: "Erreur serveur" });
     }
 }
 

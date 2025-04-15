@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/health', healthRoute);
 app.use('/register', registerRoute);
 app.use('/login', authRoute);
-app.use('/products', productsRoute);
+app.use(productsRoute);
 app.use(userRoute);
 
 app.listen(port, () => {
